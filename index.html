@@ -2,455 +2,487 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PB Waste Monitor</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    :root {
-      --bg:#07111f; --panel:#101f33; --line:#28415e;
-      --text:#eef6ff; --muted:#9bb0c9; --cyan:#55d8e8;
-      --blue:#5795ff; --red:#ff7585;
-    }
-    * { box-sizing:border-box }
-    body {
-      margin:0;
-      background:radial-gradient(circle at 10% 0%,#163b5b,transparent 35%),linear-gradient(145deg,#06101c,#0b1728 60%,#10233a);
-      color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,sans-serif;
-      min-height:100vh;
-    }
-    .wrap { max-width:1180px;margin:auto;padding:24px 16px 50px }
-    .top { display:flex;justify-content:space-between;align-items:center;margin-bottom:22px }
-    .brand { display:flex;align-items:center;gap:12px }
-    .logo {
-      width:46px;height:46px;border-radius:15px;
-      background:linear-gradient(135deg,var(--cyan),var(--blue));
-      display:grid;place-items:center;color:#061321;font-weight:900;font-size:20px
-    }
-    h1 { font-size:clamp(20px,4vw,28px);margin:0 }
-    .brand p,.muted { color:var(--muted);font-size:12px }
-    .pill { border:1px solid var(--line);border-radius:999px;padding:8px 12px;color:var(--muted);font-size:12px }
-    .hero {
-      padding:26px;border:1px solid #35516e;border-radius:24px;
-      background:linear-gradient(120deg,#183752dd,#12243add);
-      box-shadow:0 20px 60px #0005
-    }
-    .eyebrow { color:var(--cyan);font-size:11px;letter-spacing:2px;font-weight:800 }
-    .hero h2 { font-size:clamp(25px,5vw,38px);margin:10px 0 8px }
-    .hero p { color:#b9cce0;line-height:1.6 }
-    .grid { display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin:18px 0 }
-    .stat,.panel {
-      background:linear-gradient(145deg,#12243aee,#0d1b2ddd);
-      border:1px solid var(--line);border-radius:18px;
-      box-shadow:0 12px 35px #0003
-    }
-    .stat { padding:17px }
-    .stat span { color:var(--muted);font-size:12px }
-    .stat strong { display:block;font-size:25px;margin-top:9px }
-    .stat small { color:var(--muted);font-size:11px }
-    .layout { display:grid;grid-template-columns:.9fr 1.3fr;gap:16px }
-    .panel { padding:20px }
-    .panel h3 { margin:0 0 16px;font-size:18px }
-    .field { margin-bottom:13px }
-    .field label { display:block;color:var(--muted);font-size:12px;margin-bottom:7px }
-    .field input,.field select,.field textarea {
-      width:100%;background:#091727;border:1px solid #2a4562;
-      border-radius:11px;color:var(--text);padding:12px;font:inherit
-    }
-    .field textarea { min-height:70px }
-    .two { display:grid;grid-template-columns:1fr 1fr;gap:10px }
-    button {
-      border:0;border-radius:11px;padding:12px 16px;font-weight:800;
-      cursor:pointer;background:linear-gradient(100deg,var(--cyan),#70a8ff);
-      color:#061321
-    }
-    .btnrow { display:flex;gap:9px;flex-wrap:wrap }
-    .secondary { background:#203a56;color:var(--text);border:1px solid #385675 }
-    .danger { background:#512838;color:#ffdce1;border:1px solid #80404e }
-    .hidden { display:none!important }
-    .login { max-width:430px;margin:55px auto }
-    .login .panel { padding:25px }
-    .message { padding:10px 12px;border-radius:10px;margin:10px 0;font-size:13px;background:#18354a }
-    .message.error { background:#492431;color:#ffdce1 }
-    .tablewrap { overflow:auto }
-    table { width:100%;border-collapse:collapse;min-width:650px }
-    th,td { text-align:left;padding:11px 9px;border-bottom:1px solid #263d57;font-size:12px }
-    th { color:var(--muted) }
-    .tag { display:inline-block;border-radius:999px;background:#1c3b53;color:#9fefff;padding:5px 8px;font-size:10px }
-    .empty { text-align:center;padding:28px;color:var(--muted) }
-    .sectionhead { display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px }
-    .footer { text-align:center;color:#7188a3;font-size:11px;margin-top:24px }
-    @media(max-width:850px) {
-      .grid { grid-template-columns:repeat(2,1fr) }
-      .layout { grid-template-columns:1fr }
-      .pill { display:none }
-    }
-    @media(max-width:440px) {
-      .wrap { padding:16px 12px 35px }
-      .hero { padding:20px }
-      .stat { padding:14px }
-      .stat strong { font-size:21px }
-      .panel { padding:16px }
-      .two { grid-template-columns:1fr }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PB Waste Monitor</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--bg:#07111f;--panel:#102238;--line:#29435f;--text:#eef6ff;--muted:#9bb0c9;--cyan:#55d8e8;--blue:#5795ff}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 10% 0%,#163b5b,transparent 35%),linear-gradient(145deg,#06101c,#0b1728 60%,#10233a);color:var(--text);font-family:system-ui,Arial,sans-serif;min-height:100vh}
+.wrap{max-width:1180px;margin:auto;padding:22px 14px 45px}
+.top,.sectionhead{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:45px;height:45px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),var(--blue));display:grid;place-items:center;color:#061321;font-weight:900;font-size:20px}
+h1{font-size:26px;margin:0}h2{font-size:30px;margin:10px 0}h3{margin:0 0 15px}
+.muted,.brand p{color:var(--muted);font-size:12px}
+.pill,.tag{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--muted);font-size:11px}
+.hero,.panel,.stat{background:linear-gradient(145deg,#122b43ee,#0d1b2ddd);border:1px solid var(--line);border-radius:19px;box-shadow:0 12px 35px #0003}
+.hero{padding:25px;margin:20px 0}
+.eyebrow{color:var(--cyan);font-size:11px;letter-spacing:2px;font-weight:800}
+.hero p{color:#b9cce0;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:16px 0}
+.stat{padding:17px}.stat span{color:var(--muted);font-size:12px}.stat strong{display:block;font-size:24px;margin-top:8px}
+.layout{display:grid;grid-template-columns:.9fr 1.3fr;gap:15px}
+.panel{padding:19px}
+.field{margin-bottom:13px}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:7px}
+input,select,textarea{width:100%;background:#091727;border:1px solid #2a4562;border-radius:10px;color:var(--text);padding:12px;font:inherit}
+textarea{min-height:65px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+button{border:0;border-radius:10px;padding:12px 15px;font-weight:800;cursor:pointer;background:linear-gradient(100deg,var(--cyan),#70a8ff);color:#061321}
+button:disabled{opacity:.55;cursor:wait}
+.secondary{background:#203a56;color:var(--text);border:1px solid #385675}
+.danger{background:#512838;color:#ffdce1;border:1px solid #80404e}
+.btnrow{display:flex;gap:9px;flex-wrap:wrap}
+.hidden{display:none!important}
+.login{max-width:430px;margin:55px auto}
+.login .panel{padding:25px}
+.message{padding:10px 12px;border-radius:10px;margin:10px 0;font-size:13px;background:#18354a}
+.message.error{background:#492431;color:#ffdce1}
+.tablewrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:650px}
+th,td{text-align:left;padding:11px 9px;border-bottom:1px solid #263d57;font-size:12px}
+th{color:var(--muted)}
+.tag{display:inline-block;background:#1c3b53;color:#9fefff;padding:5px 8px}
+.empty{text-align:center;padding:25px;color:var(--muted)}
+.footer{text-align:center;color:#7188a3;font-size:11px;margin-top:24px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}.layout{grid-template-columns:1fr}.pill{display:none}}
+@media(max-width:440px){.wrap{padding:15px 11px 30px}.hero{padding:19px}.panel{padding:15px}.two{grid-template-columns:1fr}.stat{padding:13px}.stat strong{font-size:21px}}
+</style>
 </head>
 <body>
 <div class="wrap">
 
-  <header class="top">
-    <div class="brand">
-      <div class="logo">PB</div>
-      <div>
-        <h1>Waste Monitor</h1>
-        <p>Production waste tracking dashboard</p>
-      </div>
+<header class="top">
+  <div class="brand">
+    <div class="logo">PB</div>
+    <div>
+      <h1>Waste Monitor</h1>
+      <p>Production waste tracking dashboard</p>
     </div>
-    <div class="pill">Dubai time · GST (UTC+4)</div>
-  </header>
+  </div>
+  <div class="pill">Dubai Time · UTC+4</div>
+</header>
 
-  <section id="loginView" class="login">
-    <div class="panel">
-      <div class="eyebrow">SECURE WORKSPACE</div>
-      <h2>Sign in</h2>
-      <p class="muted">Sign in with your account.</p>
-      <div class="field">
-        <label>Email</label>
-        <input id="email" type="email" placeholder="Enter your email">
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input id="password" type="password" placeholder="Enter your password">
-      </div>
-      <button id="loginBtn" style="width:100%">Sign in</button>
-      <div id="loginMsg" class="message hidden"></div>
+<section id="loginView" class="login">
+  <div class="panel">
+    <div class="eyebrow">SECURE WORKSPACE</div>
+    <h2>Sign in</h2>
+    <p class="muted">Sign in with your account.</p>
+    <div class="field">
+      <label>Email</label>
+      <input id="email" type="email" placeholder="Enter your email">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input id="password" type="password" placeholder="Enter your password">
+    </div>
+    <button id="loginBtn" style="width:100%">Sign in</button>
+    <div id="loginMsg" class="message hidden"></div>
+  </div>
+</section>
+
+<main id="appView" class="hidden">
+  <section class="hero">
+    <div class="eyebrow">LIVE OPERATIONS OVERVIEW</div>
+    <h2>Waste Monitoring Dashboard</h2>
+    <p>Record waste, track employee details and review shift totals.</p>
+    <div class="btnrow">
+      <button class="secondary" id="refreshBtn">Refresh</button>
+      <button class="secondary" id="logoutBtn">Sign out</button>
     </div>
   </section>
 
-  <main id="appView" class="hidden">
-    <section class="hero">
-      <div class="eyebrow">LIVE OPERATIONS OVERVIEW</div>
-      <h2>Waste Monitoring Dashboard</h2>
-      <p>Record each waste entry, track employee details, and review shift totals.</p>
-      <div class="btnrow">
-        <button class="secondary" id="refreshBtn">Refresh</button>
-        <button class="secondary" id="logoutBtn">Sign out</button>
+  <section class="grid">
+    <div class="stat"><span>Mission Waste</span><strong id="missionTotal">0.00 kg</strong></div>
+    <div class="stat"><span>Pallet Waste</span><strong id="palletTotal">0.00 kg</strong></div>
+    <div class="stat"><span>Paper Bag Waste</span><strong id="paperTotal">0.00 kg</strong></div>
+    <div class="stat"><span>Handle Waste</span><strong id="handleTotal">0.00 kg</strong></div>
+  </section>
+
+  <section class="stat" style="margin-bottom:16px">
+    <span>Overall Total</span>
+    <strong id="overallTotal">0.00 kg</strong>
+  </section>
+
+  <div class="layout">
+    <section class="panel">
+      <h3>Add Waste Entry</h3>
+      <div class="field">
+        <label>Waste Category</label>
+        <select id="category">
+          <option>Mission Waste</option>
+          <option>Pallet Waste</option>
+          <option>Paper Bag Waste</option>
+          <option>Handle Waste</option>
+        </select>
       </div>
-    </section>
-
-    <section class="grid">
-      <div class="stat"><span>Mission Waste</span><strong id="missionTotal">0.00 kg</strong></div>
-      <div class="stat"><span>Pallet Waste</span><strong id="palletTotal">0.00 kg</strong></div>
-      <div class="stat"><span>Paper Bag Waste</span><strong id="paperTotal">0.00 kg</strong></div>
-      <div class="stat"><span>Handle Waste</span><strong id="handleTotal">0.00 kg</strong></div>
-    </section>
-
-    <section class="stat" style="margin-bottom:17px">
-      <span>Overall Total</span>
-      <strong id="overallTotal">0.00 kg</strong>
-    </section>
-
-    <div class="layout">
-      <section class="panel">
-        <h3>Add Waste Entry</h3>
+      <div class="field">
+        <label>Weight (kg)</label>
+        <input id="weight" type="number" min="0.01" step="0.01" placeholder="Enter weight">
+      </div>
+      <div class="field" id="personField">
+        <label>Employee Name</label>
+        <input id="person" type="text" placeholder="Employee name">
+      </div>
+      <div class="two">
         <div class="field">
-          <label>Waste category</label>
-          <select id="category">
-            <option>Mission Waste</option>
-            <option>Pallet Waste</option>
-            <option>Paper Bag Waste</option>
-            <option>Handle Waste</option>
-          </select>
+          <label>Date</label>
+          <input id="entryDate" type="date">
         </div>
         <div class="field">
-          <label>Weight (kg)</label>
-          <input id="weight" type="number" min="0.01" step="0.01" placeholder="Enter weight">
+          <label>Time (Dubai)</label>
+          <input id="entryTime" type="time">
         </div>
-        <div class="field" id="employeeField">
-          <label>Employee name</label>
-          <input id="employee" type="text" placeholder="Employee name">
-        </div>
-        <div class="two">
-          <div class="field">
-            <label>Date</label>
-            <input id="entryDate" type="date">
-          </div>
-          <div class="field">
-            <label>Time (Dubai)</label>
-            <input id="entryTime" type="time">
-          </div>
-        </div>
-        <div class="field">
-          <label>Notes</label>
-          <textarea id="notes" placeholder="Optional details"></textarea>
-        </div>
-        <button id="saveBtn" style="width:100%">Save Entry</button>
-        <div id="formMsg" class="message hidden"></div>
-        <p class="muted">Day shift: 06:00–18:00 · Night shift: 18:00–06:00. Night shift is grouped under its starting date.</p>
-      </section>
+      </div>
+      <div class="field">
+        <label>Notes</label>
+        <textarea id="notes" placeholder="Optional details"></textarea>
+      </div>
+      <button id="saveBtn" style="width:100%">Save Entry</button>
+      <div id="formMsg" class="message hidden"></div>
+      <p class="muted">Day Shift: 06:00–18:00 · Night Shift: 18:00–06:00. Night entries before 06:00 belong to the previous shift date.</p>
+    </section>
 
-      <section class="panel">
-        <div class="sectionhead">
-          <h3>Shift Summary</h3>
-          <span class="tag" id="shiftLabel">Today</span>
-        </div>
-        <div class="two">
-          <div class="stat">
-            <span>Day Shift</span>
-            <strong id="dayTotal">0.00 kg</strong>
-            <small>06:00–18:00</small>
-          </div>
-          <div class="stat">
-            <span>Night Shift</span>
-            <strong id="nightTotal">0.00 kg</strong>
-            <small>18:00–06:00</small>
-          </div>
-        </div>
-        <div class="field" style="margin-top:15px">
-          <label>Report date</label>
-          <input type="date" id="reportDate">
-        </div>
-        <div class="btnrow">
-          <button id="csvBtn">Export CSV</button>
-          <button class="secondary" id="reportRefreshBtn">Update report</button>
-        </div>
-        <p class="muted" id="reportInfo">Report totals are calculated from saved entries.</p>
-      </section>
-    </div>
-
-    <section class="panel" style="margin-top:16px">
+    <section class="panel">
       <div class="sectionhead">
-        <h3>Recent Entries</h3>
-        <span class="muted" id="entryCount">0 entries</span>
+        <h3>Shift Summary</h3>
+        <span class="tag" id="shiftLabel">Today</span>
       </div>
-      <div class="tablewrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Date & time</th><th>Category</th><th>Weight</th>
-              <th>Employee</th><th>Shift</th><th></th>
-            </tr>
-          </thead>
-          <tbody id="entriesBody">
-            <tr><td colspan="6" class="empty">No entries yet</td></tr>
-          </tbody>
-        </table>
+      <div class="two">
+        <div class="stat">
+          <span>Day Shift</span>
+          <strong id="dayTotal">0.00 kg</strong>
+          <small class="muted">06:00–18:00</small>
+        </div>
+        <div class="stat">
+          <span>Night Shift</span>
+          <strong id="nightTotal">0.00 kg</strong>
+          <small class="muted">18:00–06:00</small>
+        </div>
       </div>
+      <div class="field" style="margin-top:15px">
+        <label>Report Date</label>
+        <input type="date" id="reportDate">
+      </div>
+      <div class="btnrow">
+        <button id="csvBtn">Export CSV</button>
+        <button class="secondary" id="reportBtn">Update Report</button>
+      </div>
+      <p class="muted" id="reportInfo">Report totals are calculated from saved entries.</p>
     </section>
-  </main>
-  <div class="footer">PB Waste Monitor · Internal use</div>
+  </div>
+
+  <section class="panel" style="margin-top:16px">
+    <div class="sectionhead">
+      <h3>Recent Entries</h3>
+      <span class="muted" id="entryCount">0 entries</span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date & Time</th><th>Category</th><th>Weight</th>
+            <th>Employee</th><th>Shift</th><th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="entriesBody">
+          <tr><td colspan="6" class="empty">No entries yet</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<div class="footer">PB Waste Monitor · Internal Use</div>
 </div>
 
 <script>
 (() => {
   const SUPABASE_URL = "https://wkoqfpxnmrlsdyoerzdn.supabase.co";
   const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_jeH8qIshareQWaQU0v4uSw_aiPqRGU7";
+
   const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
   const $ = id => document.getElementById(id);
   let entries = [];
 
-  const todayDubai = () => new Date(new Date().toLocaleString("en-US",{timeZone:"Asia/Dubai"}));
-  const dateStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-  const timeStr = d => `${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
-  const kg = n => `${Number(n||0).toFixed(2)} kg`;
-
-  function shiftFor(date,time) {
-    const isNight = time >= "18:00" || time < "06:00";
-    let shiftDate = date;
-    if(time < "06:00") {
-      const d = new Date(date+"T12:00:00");
-      d.setDate(d.getDate()-1);
-      shiftDate = dateStr(d);
-    }
-    return {shift_type:isNight?"Night Shift":"Day Shift",shift_date:shiftDate};
+  function dubaiParts(date = new Date()) {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Asia/Dubai",
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hourCycle: "h23"
+    }).formatToParts(date);
+    const p = Object.fromEntries(parts.map(x => [x.type, x.value]));
+    return {
+      date: `${p.year}-${p.month}-${p.day}`,
+      time: `${p.hour}:${p.minute}`
+    };
   }
 
-  function showMsg(id,msg,error=false) {
-    const el=$(id);
-    el.textContent=msg;
-    el.classList.remove("hidden","error");
-    if(error)el.classList.add("error");
+  function previousDate(date) {
+    const d = new Date(date + "T12:00:00Z");
+    d.setUTCDate(d.getUTCDate() - 1);
+    return d.toISOString().slice(0, 10);
   }
-  function hideMsg(id) { $(id).classList.add("hidden"); }
+
+  function shiftFor(date, time) {
+    const night = time >= "18:00" || time < "06:00";
+    return {
+      shift_type: night ? "Night Shift" : "Day Shift",
+      shift_date: time < "06:00" ? previousDate(date) : date
+    };
+  }
+
+  function kg(n) {
+    return `${Number(n || 0).toFixed(2)} kg`;
+  }
+
+  function showMsg(id, message, error = false) {
+    const el = $(id);
+    el.textContent = message;
+    el.classList.remove("hidden", "error");
+    if (error) el.classList.add("error");
+  }
+
+  function hideMsg(id) {
+    $(id).classList.add("hidden");
+  }
+
   function setSignedIn(on) {
-    $("loginView").classList.toggle("hidden",on);
-    $("appView").classList.toggle("hidden",!on);
+    $("loginView").classList.toggle("hidden", on);
+    $("appView").classList.toggle("hidden", !on);
   }
-  function updateEntryFields() {
-    const c=$("category").value;
-    $("employeeField").classList.toggle("hidden",!["Mission Waste","Pallet Waste"].includes(c));
+
+  function updatePersonField() {
+    const category = $("category").value;
+    const needsPerson = ["Mission Waste", "Pallet Waste"].includes(category);
+    $("personField").classList.toggle("hidden", !needsPerson);
   }
 
   async function loadEntries() {
-    const {data,error}=await db.from("waste_entries")
-      .select("*").order("recorded_at",{ascending:false}).limit(5000);
-    if(error) {
-      showMsg("formMsg","Could not load entries: "+error.message,true);
+    hideMsg("formMsg");
+    const { data, error } = await db
+      .from("waste_entries")
+      .select("*")
+      .order("recorded_at", { ascending: false })
+      .limit(5000);
+
+    if (error) {
+      showMsg("formMsg", "Could not load entries: " + error.message, true);
       return;
     }
-    entries=data||[];
+
+    entries = data || [];
     render();
   }
 
-  function escapeHtml(s) {
-    return String(s??"").replace(/[&<>"']/g,c=>({
-      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  function escapeHtml(value) {
+    return String(value ?? "").replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;",
+      '"': "&quot;", "'": "&#39;"
     }[c]));
   }
 
   function render() {
-    const totals={
-      "Mission Waste":0,"Pallet Waste":0,
-      "Paper Bag Waste":0,"Handle Waste":0
+    const totals = {
+      "Mission Waste": 0,
+      "Pallet Waste": 0,
+      "Paper Bag Waste": 0,
+      "Handle Waste": 0
     };
-    entries.forEach(e=>{
-      if(totals[e.category]!==undefined)totals[e.category]+=Number(e.weight||0);
-    });
-    $("missionTotal").textContent=kg(totals["Mission Waste"]);
-    $("palletTotal").textContent=kg(totals["Pallet Waste"]);
-    $("paperTotal").textContent=kg(totals["Paper Bag Waste"]);
-    $("handleTotal").textContent=kg(totals["Handle Waste"]);
-    $("overallTotal").textContent=kg(Object.values(totals).reduce((a,b)=>a+b,0));
-    $("entryCount").textContent=`${entries.length} entries`;
 
-    const body=$("entriesBody");
-    if(!entries.length) {
-      body.innerHTML='<tr><td colspan="6" class="empty">No entries yet</td></tr>';
+    entries.forEach(entry => {
+      if (totals[entry.category] !== undefined) {
+        totals[entry.category] += Number(entry.weight_kg || 0);
+      }
+    });
+
+    $("missionTotal").textContent = kg(totals["Mission Waste"]);
+    $("palletTotal").textContent = kg(totals["Pallet Waste"]);
+    $("paperTotal").textContent = kg(totals["Paper Bag Waste"]);
+    $("handleTotal").textContent = kg(totals["Handle Waste"]);
+    $("overallTotal").textContent = kg(
+      Object.values(totals).reduce((a, b) => a + b, 0)
+    );
+
+    $("entryCount").textContent = `${entries.length} entries`;
+
+    const body = $("entriesBody");
+    if (!entries.length) {
+      body.innerHTML = '<tr><td colspan="6" class="empty">No entries yet</td></tr>';
     } else {
-      body.innerHTML=entries.slice(0,150).map(e=>`
+      body.innerHTML = entries.slice(0, 150).map(entry => `
         <tr>
-          <td>${escapeHtml((e.recorded_at||"").replace("T"," ").slice(0,16))}</td>
-          <td><span class="tag">${escapeHtml(e.category||"")}</span></td>
-          <td><strong>${Number(e.weight||0).toFixed(2)} kg</strong></td>
-          <td>${escapeHtml(e.employee_name||"—")}</td>
-          <td>${escapeHtml(e.shift_type||"—")}</td>
-          <td><button class="danger" data-delete="${escapeHtml(e.id)}" style="padding:7px 9px;font-size:11px">Delete</button></td>
-        </tr>`).join("");
-      body.querySelectorAll("[data-delete]").forEach(b=>
-        b.addEventListener("click",()=>deleteEntry(b.dataset.delete))
-      );
+          <td>${escapeHtml(entry.recorded_at || "")}</td>
+          <td><span class="tag">${escapeHtml(entry.category)}</span></td>
+          <td><strong>${Number(entry.weight_kg || 0).toFixed(2)} kg</strong></td>
+          <td>${escapeHtml(entry.person_name || "—")}</td>
+          <td>${escapeHtml(entry.shift_type || "—")}</td>
+          <td><button class="danger" data-delete="${escapeHtml(entry.id)}" style="padding:7px 9px;font-size:11px">Delete</button></td>
+        </tr>
+      `).join("");
+
+      body.querySelectorAll("[data-delete]").forEach(button => {
+        button.addEventListener("click", () => deleteEntry(button.dataset.delete));
+      });
     }
+
     updateReport();
   }
 
   async function saveEntry() {
     hideMsg("formMsg");
-    const category=$("category").value;
-    const weight=Number($("weight").value);
-    const date=$("entryDate").value;
-    const time=$("entryTime").value;
-    const employee_name=$("employee").value.trim();
-    const notes=$("notes").value.trim();
 
-    if(!weight||weight<=0||!date||!time) {
-      showMsg("formMsg","Please enter a valid weight, date and time.",true);
-      return;
-    }
-    if(["Mission Waste","Pallet Waste"].includes(category)&&!employee_name) {
-      showMsg("formMsg","Please enter the employee name.",true);
+    const category = $("category").value;
+    const weight_kg = Number($("weight").value);
+    const date = $("entryDate").value;
+    const time = $("entryTime").value;
+    const person_name = $("person").value.trim();
+    const notes = $("notes").value.trim();
+
+    if (!weight_kg || weight_kg <= 0 || !date || !time) {
+      showMsg("formMsg", "Please enter a valid weight, date and time.", true);
       return;
     }
 
-    const {shift_type,shift_date}=shiftFor(date,time);
-    const recorded_at=new Date(`${date}T${time}:00+04:00`).toISOString();
-    $("saveBtn").disabled=true;
-    $("saveBtn").textContent="Saving…";
+    if (["Mission Waste", "Pallet Waste"].includes(category) && !person_name) {
+      showMsg("formMsg", "Please enter the employee name.", true);
+      return;
+    }
 
-    const {error}=await db.from("waste_entries").insert([{
-      category,weight,employee_name:employee_name||null,
-      notes:notes||null,recorded_at,shift_type,shift_date
+    const { shift_type, shift_date } = shiftFor(date, time);
+    const recorded_at = new Date(`${date}T${time}:00+04:00`).toISOString();
+
+    $("saveBtn").disabled = true;
+    $("saveBtn").textContent = "Saving...";
+
+    const { error } = await db.from("waste_entries").insert([{
+      category,
+      weight_kg,
+      person_name: person_name || null,
+      notes: notes || null,
+      recorded_at,
+      shift_type,
+      shift_date
     }]);
 
-    $("saveBtn").disabled=false;
-    $("saveBtn").textContent="Save Entry";
+    $("saveBtn").disabled = false;
+    $("saveBtn").textContent = "Save Entry";
 
-    if(error) {
-      showMsg("formMsg","Save failed: "+error.message,true);
+    if (error) {
+      showMsg("formMsg", "Save failed: " + error.message, true);
       return;
     }
-    showMsg("formMsg","Entry saved successfully.");
-    $("weight").value="";
-    $("employee").value="";
-    $("notes").value="";
+
+    showMsg("formMsg", "Entry saved successfully.");
+    $("weight").value = "";
+    $("person").value = "";
+    $("notes").value = "";
     await loadEntries();
   }
 
   async function deleteEntry(id) {
-    if(!confirm("Delete this entry?"))return;
-    const {error}=await db.from("waste_entries").delete().eq("id",id);
-    if(error) {
-      showMsg("formMsg","Delete failed: "+error.message,true);
+    if (!confirm("Delete this entry?")) return;
+
+    const { error } = await db.from("waste_entries").delete().eq("id", id);
+
+    if (error) {
+      showMsg("formMsg", "Delete failed: " + error.message, true);
       return;
     }
+
+    showMsg("formMsg", "Entry deleted.");
     await loadEntries();
   }
 
   function updateReport() {
-    const d=$("reportDate").value||dateStr(todayDubai());
-    $("shiftLabel").textContent=d;
-    const day=entries.filter(e=>e.shift_date===d&&e.shift_type==="Day Shift")
-      .reduce((s,e)=>s+Number(e.weight||0),0);
-    const night=entries.filter(e=>e.shift_date===d&&e.shift_type==="Night Shift")
-      .reduce((s,e)=>s+Number(e.weight||0),0);
-    $("dayTotal").textContent=kg(day);
-    $("nightTotal").textContent=kg(night);
-    $("reportInfo").textContent=`${d}: Day ${day.toFixed(2)} kg · Night ${night.toFixed(2)} kg`;
+    const date = $("reportDate").value || dubaiParts().date;
+    $("shiftLabel").textContent = date;
+
+    const day = entries
+      .filter(e => e.shift_date === date && e.shift_type === "Day Shift")
+      .reduce((sum, e) => sum + Number(e.weight_kg || 0), 0);
+
+    const night = entries
+      .filter(e => e.shift_date === date && e.shift_type === "Night Shift")
+      .reduce((sum, e) => sum + Number(e.weight_kg || 0), 0);
+
+    $("dayTotal").textContent = kg(day);
+    $("nightTotal").textContent = kg(night);
+    $("reportInfo").textContent =
+      `${date}: Day ${day.toFixed(2)} kg · Night ${night.toFixed(2)} kg`;
   }
 
   function exportCsv() {
-    const d=$("reportDate").value||dateStr(todayDubai());
-    const rows=[
-      ["Date & Time","Category","Weight kg","Employee","Shift","Shift Date","Notes"],
-      ...entries.filter(e=>e.shift_date===d).map(e=>[
-        e.recorded_at,e.category,e.weight,e.employee_name||"",
-        e.shift_type,e.shift_date,e.notes||""
-      ])
+    const date = $("reportDate").value || dubaiParts().date;
+    const rows = [
+      ["Date & Time", "Category", "Weight kg", "Employee", "Shift", "Shift Date", "Notes"],
+      ...entries
+        .filter(e => e.shift_date === date)
+        .map(e => [
+          e.recorded_at, e.category, e.weight_kg,
+          e.person_name || "", e.shift_type, e.shift_date, e.notes || ""
+        ])
     ];
-    const csv=rows.map(r=>r.map(v=>`"${String(v??"").replace(/"/g,'""')}"`).join(",")).join("\r\n");
-    const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
-    const a=document.createElement("a");
-    a.href=url;a.download=`PB-Waste-${d}.csv`;a.click();
+
+    const csv = rows.map(row =>
+      row.map(value => `"${String(value ?? "").replace(/"/g, '""')}"`).join(",")
+    ).join("\r\n");
+
+    const url = URL.createObjectURL(
+      new Blob([csv], { type: "text/csv;charset=utf-8" })
+    );
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `PB-Waste-${date}.csv`;
+    a.click();
     URL.revokeObjectURL(url);
   }
 
   async function login() {
     hideMsg("loginMsg");
-    $("loginBtn").disabled=true;
-    const {error}=await db.auth.signInWithPassword({
-      email:$("email").value.trim(),
-      password:$("password").value
+    $("loginBtn").disabled = true;
+
+    const { error } = await db.auth.signInWithPassword({
+      email: $("email").value.trim(),
+      password: $("password").value
     });
-    $("loginBtn").disabled=false;
-    if(error)showMsg("loginMsg",error.message,true);
+
+    $("loginBtn").disabled = false;
+
+    if (error) showMsg("loginMsg", error.message, true);
   }
 
   async function boot() {
-    const {data:{session}}=await db.auth.getSession();
+    const { data: { session } } = await db.auth.getSession();
     setSignedIn(!!session);
-    if(session)await loadEntries();
-    db.auth.onAuthStateChange(async(_event,session)=>{
+
+    if (session) await loadEntries();
+
+    db.auth.onAuthStateChange((_event, session) => {
       setSignedIn(!!session);
-      if(session)await loadEntries();
+      if (session) loadEntries();
     });
   }
 
-  const now=todayDubai();
-  $("entryDate").value=dateStr(now);
-  $("entryTime").value=timeStr(now);
-  $("reportDate").value=dateStr(now);
+  const now = dubaiParts();
+  $("entryDate").value = now.date;
+  $("entryTime").value = now.time;
+  $("reportDate").value = now.date;
 
-  $("category").addEventListener("change",updateEntryFields);
-  $("loginBtn").addEventListener("click",login);
-  $("password").addEventListener("keydown",e=>{if(e.key==="Enter")login()});
-  $("saveBtn").addEventListener("click",saveEntry);
-  $("refreshBtn").addEventListener("click",loadEntries);
-  $("reportRefreshBtn").addEventListener("click",updateReport);
-  $("reportDate").addEventListener("change",updateReport);
-  $("csvBtn").addEventListener("click",exportCsv);
-  $("logoutBtn").addEventListener("click",()=>db.auth.signOut());
+  $("category").addEventListener("change", updatePersonField);
+  $("loginBtn").addEventListener("click", login);
+  $("password").addEventListener("keydown", e => {
+    if (e.key === "Enter") login();
+  });
+  $("saveBtn").addEventListener("click", saveEntry);
+  $("refreshBtn").addEventListener("click", loadEntries);
+  $("reportBtn").addEventListener("click", updateReport);
+  $("reportDate").addEventListener("change", updateReport);
+  $("csvBtn").addEventListener("click", exportCsv);
+  $("logoutBtn").addEventListener("click", () => db.auth.signOut());
 
-  updateEntryFields();
+  updatePersonField();
   boot();
 })();
 </script>
